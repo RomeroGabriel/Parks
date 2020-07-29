@@ -36,6 +36,16 @@ namespace ParksAPI
 
             services.AddScoped<INationalParkRepository, NationalParkRepository>();
             services.AddAutoMapper(typeof(ParkMappings));
+            services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("ParksAPIDoc",
+                    new Microsoft.OpenApi.Models.OpenApiInfo()
+                    {
+                        Title = "Parks API Doc",
+                        Version = "1",
+                    }
+                    );
+            });
 
             services.AddControllers();
         }
@@ -49,7 +59,7 @@ namespace ParksAPI
             }
 
             app.UseHttpsRedirection();
-
+            app.UseSwagger();
             app.UseRouting();
 
             app.UseAuthorization();
