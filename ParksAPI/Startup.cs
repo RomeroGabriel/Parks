@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -43,8 +44,10 @@ namespace ParksAPI
                     {
                         Title = "Parks API Doc",
                         Version = "1",
-                    }
-                    );
+                        Description = "Udemy Parky API",
+                    });
+                var filePath = Path.Combine(System.AppContext.BaseDirectory, "ParksAPI.xml");
+                options.IncludeXmlComments(filePath);
             });
 
             services.AddControllers();
@@ -60,6 +63,11 @@ namespace ParksAPI
 
             app.UseHttpsRedirection();
             app.UseSwagger();
+            app.UseSwaggerUI(options =>
+            {
+                options.SwaggerEndpoint("/swagger/ParksAPIDoc/swagger.json", "Park API");
+                options.RoutePrefix = "";
+            });
             app.UseRouting();
 
             app.UseAuthorization();
