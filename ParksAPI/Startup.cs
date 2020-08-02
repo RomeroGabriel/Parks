@@ -41,10 +41,18 @@ namespace ParksAPI
             services.AddAutoMapper(typeof(ParkMappings));
             services.AddSwaggerGen(options =>
             {
-                options.SwaggerDoc("ParksAPIDoc",
+                options.SwaggerDoc("ParksAPIDocNP",
                     new Microsoft.OpenApi.Models.OpenApiInfo()
                     {
-                        Title = "Parks API Doc",
+                        Title = "Parks API Doc NP",
+                        Version = "1",
+                        Description = "Udemy Parky API",
+                    });
+
+                options.SwaggerDoc("ParksAPIDocTrails",
+                    new Microsoft.OpenApi.Models.OpenApiInfo()
+                    {
+                        Title = "Parks API Doc Trails",
                         Version = "1",
                         Description = "Udemy Parky API",
                     });
@@ -67,7 +75,8 @@ namespace ParksAPI
             app.UseSwagger();
             app.UseSwaggerUI(options =>
             {
-                options.SwaggerEndpoint("/swagger/ParksAPIDoc/swagger.json", "Park API");
+                options.SwaggerEndpoint("/swagger/ParksAPIDocNP/swagger.json", "Park API NP");
+                options.SwaggerEndpoint("/swagger/ParksAPIDocTrails/swagger.json", "Park API Trails");
                 options.RoutePrefix = "";
             });
             app.UseRouting();
