@@ -17,6 +17,9 @@ using ParksAPI.Data;
 using ParksAPI.ParkMapper;
 using ParksAPI.Repository;
 using ParksAPI.Repository.IRepository;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.Extensions.Options;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace ParksAPI
 {
@@ -39,32 +42,43 @@ namespace ParksAPI
             services.AddScoped<ITrailRepository, TrailRepository>();
 
             services.AddAutoMapper(typeof(ParkMappings));
-            services.AddSwaggerGen(options =>
-            {
-                options.SwaggerDoc("ParksAPIDocNP",
-                    new Microsoft.OpenApi.Models.OpenApiInfo()
-                    {
-                        Title = "Parks API Doc NP",
-                        Version = "1",
-                        Description = "Udemy Parky API",
-                    });
 
-                options.SwaggerDoc("ParksAPIDocTrails",
-                    new Microsoft.OpenApi.Models.OpenApiInfo()
-                    {
-                        Title = "Parks API Doc Trails",
-                        Version = "1",
-                        Description = "Udemy Parky API",
-                    });
-                var filePath = Path.Combine(System.AppContext.BaseDirectory, "ParksAPI.xml");
-                options.IncludeXmlComments(filePath);
+            services.AddApiVersioning(options =>
+            {
+                options.AssumeDefaultVersionWhenUnspecified = true;
+                options.DefaultApiVersion = new ApiVersion(1, 0);
+                options.ReportApiVersions = true;
             });
+            services.AddVersionedApiExplorer(options => options.GroupNameFormat = "'v'VVV");
+            services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
+            services.AddSwaggerGen();
+
+            //services.AddSwaggerGen(options =>
+            //{
+            //    options.SwaggerDoc("ParksAPIDoc",
+            //        new Microsoft.OpenApi.Models.OpenApiInfo()
+            //        {
+            //            Title = "Parks API Doc",
+            //            Version = "1",
+            //            Description = "Udemy Parky API",
+            //        });
+
+            //    //options.SwaggerDoc("ParksAPIDocTrails",
+            //    //    new Microsoft.OpenApi.Models.OpenApiInfo()
+            //    //    {
+            //    //        Title = "Parks API Doc Trails",
+            //    //        Version = "1",
+            //    //        Description = "Udemy Parky API",
+            //    //    });
+            //    var filePath = Path.Combine(System.AppContext.BaseDirectory, "ParksAPI.xml");
+            //    options.IncludeXmlComments(filePath);
+            //});
 
             services.AddControllers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IApiVersionDescriptionProvider provider)
         {
             if (env.IsDevelopment())
             {
@@ -73,12 +87,22 @@ namespace ParksAPI
 
             app.UseHttpsRedirection();
             app.UseSwagger();
+
             app.UseSwaggerUI(options =>
             {
-                options.SwaggerEndpoint("/swagger/ParksAPIDocNP/swagger.json", "Park API NP");
-                options.SwaggerEndpoint("/swagger/ParksAPIDocTrails/swagger.json", "Park API Trails");
+                foreach (var desc in provider.ApiVersionDescriptions)
+                {
+                    options.SwaggerEndpoint($"/swagger/{desc.GroupName}/swagger.json", desc.GroupName.ToUpperInvariant());
+                }
                 options.RoutePrefix = "";
             });
+
+            //app.UseSwaggerUI(options =>
+            //{
+            //    options.SwaggerEndpoint("/swagger/ParksAPIDoc/swagger.json", "Park API");
+            //    //options.SwaggerEndpoint("/swagger/ParksAPIDocTrails/swagger.json", "Pakrk API Trails");
+            //    options.RoutePrefix = "";
+            //});
             app.UseRouting();
 
             app.UseAuthorization();

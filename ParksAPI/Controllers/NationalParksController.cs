@@ -11,9 +11,10 @@ using ParksAPI.Repository.IRepository;
 
 namespace ParksAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v{version:apiVersion}/nationalparks")]
+    //[Route("api/[controller]")]
     [ApiController]
-    [ApiExplorerSettings(GroupName = "ParksAPIDocNP")]
+    //[ApiExplorerSettings(GroupName = "ParksAPIDocNP")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public class NationalParksController : Controller
     {
@@ -87,7 +88,11 @@ namespace ParksAPI.Controllers
                 ModelState.AddModelError("", $"Something went wrong when saving the record {parkObj.Name}");
                 return StatusCode(500, ModelState);
             }
-            return CreatedAtRoute("GetNationalPark", new { id = parkObj.Id }, parkObj);
+            return CreatedAtRoute("GetNationalPark", 
+                new { 
+                    id = parkObj.Id,
+                    version = HttpContext.GetRequestedApiVersion().ToString()
+                }, parkObj);
         }
 
         [HttpPatch("{id:int}", Name = "UpdateNationalPark")]

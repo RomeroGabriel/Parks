@@ -17,6 +17,12 @@
             <param name="id">The ID of national Park</param>
             <returns></returns>
         </member>
+        <member name="M:ParksAPI.Controllers.NationalParksControllerV2.GetNationalParks">
+            <summary>
+            Get list of national parks.
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:ParksAPI.Controllers.TrailsController.GetTrails">
             <summary>
             Get list of trails.
@@ -28,6 +34,13 @@
             Get individual trail.
             </summary>
             <param name="id">The ID of trail</param>
+            <returns></returns>
+        </member>
+        <member name="M:ParksAPI.Controllers.TrailsController.GetTrailByNationalPark(System.Int32)">
+            <summary>
+            Get individual trail.
+            </summary>
+            <param name="parkID">The ID of trail</param>
             <returns></returns>
         </member>
     </members>

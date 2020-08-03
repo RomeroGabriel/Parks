@@ -12,9 +12,10 @@ using ParksAPI.Repository.IRepository;
 
 namespace ParksAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v{version:apiVersion}/trails")]
+    //[Route("api/[controller]")]
     [ApiController]
-    [ApiExplorerSettings(GroupName = "ParksAPIDocTrails")]
+    //[ApiExplorerSettings(GroupName = "ParksAPIDocTrails")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public class TrailsController : Controller
     {
@@ -63,6 +64,34 @@ namespace ParksAPI.Controllers
             }
             var objDTO = _mapper.Map<TrailDTO>(obj);
             return Ok(objDTO);
+        }
+
+        /// <summary>
+        /// Get individual trail.
+        /// </summary>
+        /// <param name="parkID">The ID of trail</param>
+        /// <returns></returns>
+        [HttpGet("[action]/{parkID:int}", Name = "GetTrailByPark")]
+        [ProducesResponseType(200, Type = typeof(TrailDTO))]
+        [ProducesResponseType(404)]
+        [ProducesDefaultResponseType]
+        public IActionResult GetTrailByNationalPark(int parkID)
+        {
+            var obj = _trailRepo.GetTrailsByPark(parkID);
+            if (obj == null)
+            {
+                return NotFound();
+            }
+
+            var finalResult = new List<TrailDTO>();
+
+            foreach(var trail in obj)
+            {
+                var objDTO = _mapper.Map<TrailDTO>(obj);
+                finalResult.Add(objDTO);
+            }
+
+            return Ok(finalResult);
         }
 
         [HttpPost]
