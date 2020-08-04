@@ -18,6 +18,8 @@ namespace ParksAPI.Models
         [Required]
         public double Distance { get; set; }
 
+        public double Elevation { get; set; }
+
         public TrailDifficulty Difficulty { get; set; }
 
         [Required]
