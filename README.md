@@ -1,7 +1,7 @@
 # Parks
 Repositório de estudos utlizando ASP.NET Core Web Api e Design Patterns.
 
-API RESTFull,seguindo curso disponível na udemy: https://www.udemy.com/course/quick-introduction-to-aspnet-mvc-core-20/
+API RESTFull, seguindo o curso disponível na udemy: https://www.udemy.com/course/quick-introduction-to-aspnet-mvc-core-20/
 
 
 ## API: 
