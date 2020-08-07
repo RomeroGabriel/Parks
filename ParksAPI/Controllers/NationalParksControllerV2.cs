@@ -17,7 +17,7 @@ namespace ParksAPI.Controllers
     [ApiController]
     //[ApiExplorerSettings(GroupName = "ParksAPIDocNP")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public class NationalParksControllerV2 : Controller
+    public class NationalParksControllerV2 : ControllerBase
     {
         private readonly INationalParkRepository _npRepo;
         private readonly IMapper _mapper;

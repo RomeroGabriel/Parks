@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
@@ -16,7 +17,7 @@ namespace ParksAPI.Controllers
     [ApiController]
     //[ApiExplorerSettings(GroupName = "ParksAPIDocNP")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public class NationalParksController : Controller
+    public class NationalParksController : ControllerBase
     {
         private readonly INationalParkRepository _npRepo;
         private readonly IMapper _mapper;
@@ -53,6 +54,7 @@ namespace ParksAPI.Controllers
         [HttpGet("{id:int}", Name = "GetNationalPark")]
         [ProducesResponseType(200, Type = typeof(NationalParkDTO))]
         [ProducesResponseType(404)]
+        [Authorize]
         [ProducesDefaultResponseType]
         public IActionResult GetNationalPark(int id)
         {
