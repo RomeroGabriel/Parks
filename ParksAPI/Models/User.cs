@@ -17,4 +17,21 @@ namespace ParksAPI.Models
         [NotMapped]
         public string Token { get; set; }
     }
+
+    public class UserAuthentiication
+    {
+        [Required]
+        public string Username { get; set; }
+        [Required]
+        public string Password { get; set; }
+    }
+
+    public class UserRegister
+    {
+        [Required]
+        public string Username { get; set; }
+        [Required]
+        public string Password { get; set; }
+        public string Role { get; set; }
+    }
 }
