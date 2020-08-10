@@ -9,6 +9,7 @@ namespace ParkWeb
     {
         public static string APIBaseURL = "https://localhost:44368/"; 
         public static string ParkAPI_URL = APIBaseURL + "api/v1/nationalparks/";
-        public static string TraiAPI_lURL = APIBaseURL + "api/v1/trails/";
+        public static string TraiAPI_URL = APIBaseURL + "api/v1/trails/";
+        public static string AccountAPI_URL = APIBaseURL + "api/v1/users/";
     }
 }

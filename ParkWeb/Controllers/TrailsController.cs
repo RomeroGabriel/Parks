@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ParkWeb.Models;
 using ParkWeb.Models.ViewModel;
@@ -10,6 +12,7 @@ using ParkWeb.Repository.IRepository;
 
 namespace ParkWeb.Controllers
 {
+    [Authorize]
     public class TrailsController : Controller
     {
 
@@ -29,12 +32,13 @@ namespace ParkWeb.Controllers
 
         public async Task<IActionResult> GetAllTrails()
         {
-            return Json(new { data = await _trailRepo.GetAllAsync(SD.TraiAPI_lURL) });
+            return Json(new { data = await _trailRepo.GetAllAsync(SD.TraiAPI_URL, HttpContext.Session.GetString("Token")) });
         }
 
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Upsert(int? id)
         {
-            IEnumerable<NationalPark> npList = await _npRepo.GetAllAsync(SD.ParkAPI_URL);
+            IEnumerable<NationalPark> npList = await _npRepo.GetAllAsync(SD.ParkAPI_URL, HttpContext.Session.GetString("Token"));
 
             TrailsVM objVM = new TrailsVM()
             {
@@ -51,8 +55,8 @@ namespace ParkWeb.Controllers
                 return View(objVM);
             }
 
-            objVM.Trail = await _trailRepo.GetAsync(SD.TraiAPI_lURL, id.GetValueOrDefault());
-            if (objVM == null)
+            objVM.Trail = await _trailRepo.GetAsync(SD.TraiAPI_URL, id.GetValueOrDefault(), HttpContext.Session.GetString("Token"));
+            if (objVM.Trail == null)
             {
                 return NotFound();
             }
@@ -68,18 +72,18 @@ namespace ParkWeb.Controllers
             {
                 if (obj.Trail.Id == 0)
                 {
-                    await _trailRepo.CreateAsync(SD.TraiAPI_lURL, obj.Trail);
+                    await _trailRepo.CreateAsync(SD.TraiAPI_URL, obj.Trail, HttpContext.Session.GetString("Token"));
                 }
                 else
                 {
-                    await _trailRepo.UpdateAsync(SD.TraiAPI_lURL + obj.Trail.Id, obj.Trail);
+                    await _trailRepo.UpdateAsync(SD.TraiAPI_URL + obj.Trail.Id, obj.Trail, HttpContext.Session.GetString("Token"));
                 }
 
                 return RedirectToAction(nameof(Index));
             }
             else
             {
-                IEnumerable<NationalPark> npList = await _npRepo.GetAllAsync(SD.ParkAPI_URL);
+                IEnumerable<NationalPark> npList = await _npRepo.GetAllAsync(SD.ParkAPI_URL, HttpContext.Session.GetString("Token"));
 
                 TrailsVM objVM = new TrailsVM()
                 {
@@ -96,7 +100,7 @@ namespace ParkWeb.Controllers
 
         public async Task<IActionResult> Delete(int id)
         {
-            var status = await _trailRepo.DeleteAsync(SD.TraiAPI_lURL, id);
+            var status = await _trailRepo.DeleteAsync(SD.TraiAPI_URL, id, HttpContext.Session.GetString("Token"));
             if (status)
             {
                 return Json(new { success = true, message="Delete Successful" });

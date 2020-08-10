@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ParkWeb.Models;
 using ParkWeb.Repository.IRepository;
 
 namespace ParkWeb.Controllers
 {
+    [Authorize]
     public class NationalParksController : Controller
     {
 
@@ -26,9 +29,10 @@ namespace ParkWeb.Controllers
 
         public async Task<IActionResult> GetAllNationalPark()
         {
-            return Json(new { data = await _npRepo.GetAllAsync(SD.ParkAPI_URL) });
+            return Json(new { data = await _npRepo.GetAllAsync(SD.ParkAPI_URL, HttpContext.Session.GetString("Token")) });
         }
 
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Upsert(int? id)
         {
             NationalPark obj = new NationalPark();
@@ -37,7 +41,7 @@ namespace ParkWeb.Controllers
                 return View(obj);
             }
 
-            obj = await _npRepo.GetAsync(SD.ParkAPI_URL, id.GetValueOrDefault());
+            obj = await _npRepo.GetAsync(SD.ParkAPI_URL, id.GetValueOrDefault(), HttpContext.Session.GetString("Token"));
             if (obj == null)
             {
                 return NotFound();
@@ -69,17 +73,17 @@ namespace ParkWeb.Controllers
                 }
                 else
                 {
-                    var objDB = await _npRepo.GetAsync(SD.ParkAPI_URL, obj.Id);
+                    var objDB = await _npRepo.GetAsync(SD.ParkAPI_URL, obj.Id, HttpContext.Session.GetString("Token"));
                     obj.Picture = objDB.Picture;
                 }
 
                 if (obj.Id == 0)
                 {
-                    await _npRepo.CreateAsync(SD.ParkAPI_URL, obj);
+                    await _npRepo.CreateAsync(SD.ParkAPI_URL, obj, HttpContext.Session.GetString("Token"));
                 }
                 else
                 {
-                    await _npRepo.UpdateAsync(SD.ParkAPI_URL + obj.Id, obj);
+                    await _npRepo.UpdateAsync(SD.ParkAPI_URL + obj.Id, obj, HttpContext.Session.GetString("Token"));
                 }
 
                 return RedirectToAction(nameof(Index));
@@ -90,9 +94,11 @@ namespace ParkWeb.Controllers
             }
         }
 
+        [HttpDelete]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
-            var status = await _npRepo.DeleteAsync(SD.ParkAPI_URL, id);
+            var status = await _npRepo.DeleteAsync(SD.ParkAPI_URL, id, HttpContext.Session.GetString("Token"));
             if (status)
             {
                 return Json(new { success = true, message="Delete Successful" });

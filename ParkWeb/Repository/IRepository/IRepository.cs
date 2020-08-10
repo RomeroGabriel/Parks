@@ -7,10 +7,10 @@ namespace ParkWeb.Repository.IRepository
 {
     public interface IRepository<T> where T : class
     {
-        Task<T> GetAsync(string url, int id);
-        Task<IEnumerable<T>> GetAllAsync(string url);
-        Task<bool> CreateAsync(string url, T objCreate);
-        Task<bool> UpdateAsync(string url, T objUpdate);
-        Task<bool> DeleteAsync(string url, int id);
+        Task<T> GetAsync(string url, int id, string token);
+        Task<IEnumerable<T>> GetAllAsync(string url, string token);
+        Task<bool> CreateAsync(string url, T objCreate, string token);
+        Task<bool> UpdateAsync(string url, T objUpdate, string token);
+        Task<bool> DeleteAsync(string url, int id, string token);
     }
 }
